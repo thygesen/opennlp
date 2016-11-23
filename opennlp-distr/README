@@ -22,17 +22,9 @@ removed. Now Java 1.7 is required.
 
 Additionally the release contains the following noteworthy changes:
 
-- Added evalutation support to the parser and doccat components
-- Added support to Evalita 07/09, Brat and OntoNotes corpus formats
-- Now L-BFGS is stable
-- Added Snowball to the Stemmer package
-- NameFinder now supports a user defined factory
-- Added pluggable machine learning support
-- Added a lemmatizer module
-- Added Cluster, Document Begin and Clark feature generators to the Name Finder
-- Added Liblinear as a Machine Learning addon
-- Entity Linker now has a command line interface
-- Added sequence classification support
+-- Added a CLI to the lemmatizer component.
+-- Added a supervised statistical lemmatizer.
+-- The lemmatizer component API has been entirely rewritten. The changes in the previously existing Dictionary-based lemmatizer are not backward compatible.
 
 A detailed list of the issues related to this release can be found in the release
 notes.
