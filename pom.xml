@@ -127,7 +127,7 @@
 		<opennlp.forkCount>1.0C</opennlp.forkCount>
 		<coveralls.maven.plugin>4.3.0</coveralls.maven.plugin>
 		<jacoco.maven.plugin>0.7.9</jacoco.maven.plugin>
-		<maven.surefire.plugin>2.19.1</maven.surefire.plugin>
+		<maven.surefire.plugin>2.20</maven.surefire.plugin>
 	</properties>
 
 	<build>
@@ -228,10 +228,13 @@
 					<version>${maven.surefire.plugin}</version>
 					<configuration>
 						<forkCount>${opennlp.forkCount}</forkCount>
+						<!--
+						NOTE: moved to tools
 						<excludes>
 							<exclude>**/stemmer/*</exclude>
 							<exclude>**/stemmer/snowball/*</exclude>
 						</excludes>
+						-->
 					</configuration>
 				</plugin>
 
@@ -416,6 +419,30 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<profile>
+			<!-- can be moved to tools because it is only used there. -->
+			<id>eval</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<forkCount>1.0C</forkCount>
+							<argLine>-Xmx10G</argLine>
+							<systemPropertyVariables>
+								<!-- if data has a fixed location.
+								This also require profile activation activeByDefault for default-test profile,
+								 because we need to deactivate default-test when running eval -->
+								<OPENNLP_DATA_DIR>/Users/thygesen/Projects/apache/opennlp-data-dir</OPENNLP_DATA_DIR>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 	</profiles>
 
 	<modules>
