@@ -19,6 +19,18 @@ package opennlp.tools.util;
 
 public class StringUtil {
 
+  public static char LF = '\n';
+  public static char CR = '\r';
+
+  /**
+   * Checks if char is Line Feed or Carriage Return
+   * @param charCode
+   * @return true, if charCode is LF or CR char
+   */
+  public static boolean isNewline(char charCode) {
+    return (charCode == LF || charCode == CR);
+  }
+
   /**
    * Determines if the specified character is a whitespace.
    *

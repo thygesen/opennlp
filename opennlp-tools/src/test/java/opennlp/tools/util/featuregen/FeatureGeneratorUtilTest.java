@@ -41,5 +41,9 @@ public class FeatureGeneratorUtilTest {
     Assert.assertEquals("cp", FeatureGeneratorUtil.tokenFeature("A."));
     Assert.assertEquals("ic", FeatureGeneratorUtil.tokenFeature("Mike"));
     Assert.assertEquals("other", FeatureGeneratorUtil.tokenFeature("somethingStupid"));
+
+    // newline + cr
+    Assert.assertEquals("nl", FeatureGeneratorUtil.tokenFeature("\n"));
+    Assert.assertEquals("nl", FeatureGeneratorUtil.tokenFeature("\r"));
   }
 }

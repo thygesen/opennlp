@@ -33,6 +33,7 @@ public class SimpleTokenizer extends AbstractTokenizer {
     static final CharacterEnum ALPHABETIC = new CharacterEnum("alphabetic");
     static final CharacterEnum NUMERIC = new CharacterEnum("numeric");
     static final CharacterEnum OTHER = new CharacterEnum("other");
+    static final CharacterEnum NEWLINE = new CharacterEnum("newline");
 
     private String name;
 
@@ -45,7 +46,7 @@ public class SimpleTokenizer extends AbstractTokenizer {
       return name;
     }
   }
-  
+
   public static final SimpleTokenizer INSTANCE;
 
   static {
@@ -70,7 +71,10 @@ public class SimpleTokenizer extends AbstractTokenizer {
     char pc = 0;
     for (int ci = 0; ci < sl; ci++) {
       char c = s.charAt(ci);
-      if (StringUtil.isWhitespace(c)) {
+      if (StringUtil.isNewline(c)) {
+        charType = CharacterEnum.NEWLINE;
+      }
+      else if (StringUtil.isWhitespace(c)) {
         charType = CharacterEnum.WHITESPACE;
       }
       else if (Character.isLetter(c)) {

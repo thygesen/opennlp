@@ -89,4 +89,18 @@ public class SimpleTokenizerTest {
     Assert.assertTrue(")".equals(tokenizedText[4]));
     Assert.assertTrue(tokenizedText.length == 5);
   }
+
+  @Test
+  public void testNewlineEnding() {
+    String text = "Newline comes here.\n";
+
+    String[] tokenizedText = mTokenizer.tokenize(text);
+
+    Assert.assertTrue("Newline".equals(tokenizedText[0]));
+    Assert.assertTrue("comes".equals(tokenizedText[1]));
+    Assert.assertTrue("here".equals(tokenizedText[2]));
+    Assert.assertTrue(".".equals(tokenizedText[3]));
+    Assert.assertTrue("\n".equals(tokenizedText[4]));
+    Assert.assertTrue(tokenizedText.length == 5);
+  }
 }

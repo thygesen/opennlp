@@ -29,6 +29,7 @@ public class FeatureGeneratorUtil {
   private static final String TOKEN_AND_CLASS_PREFIX = "w&c";
 
   private static final Pattern capPeriod = Pattern.compile("^[A-Z]\\.$");
+  private static final Pattern newline = Pattern.compile("^[\\n\\r]+$");
 
   /**
    * Generates a class name for the specified token.
@@ -46,6 +47,7 @@ public class FeatureGeneratorUtil {
    * <li>sc - single capital letter </li>
    * <li>ac - all capital letters </li>
    * <li>ic - initial capital letter </li>
+   * <li>nl - one or more newline characters</li>
    * <li>other - other </li>
    * </ul>
    * @param token A token or word.
@@ -98,6 +100,9 @@ public class FeatureGeneratorUtil {
     }
     else if (pattern.isInitialCapitalLetter()) {
       feat = "ic";
+    }
+    else if (newline.matcher(token).find()) {
+      feat = "nl";
     }
     else {
       feat = "other";
