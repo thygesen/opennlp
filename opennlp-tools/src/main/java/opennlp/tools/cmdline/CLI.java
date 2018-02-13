@@ -37,6 +37,7 @@ import opennlp.tools.cmdline.doccat.DoccatEvaluatorTool;
 import opennlp.tools.cmdline.doccat.DoccatTool;
 import opennlp.tools.cmdline.doccat.DoccatTrainerTool;
 import opennlp.tools.cmdline.entitylinker.EntityLinkerTool;
+import opennlp.tools.cmdline.gender.GenderDetectorEvaluatorTool;
 import opennlp.tools.cmdline.gender.GenderDetectorTrainerTool;
 import opennlp.tools.cmdline.langdetect.LanguageDetectorConverterTool;
 import opennlp.tools.cmdline.langdetect.LanguageDetectorCrossValidatorTool;
@@ -98,6 +99,7 @@ public final class CLI {
 
     // Gender Detector
     tools.add(new GenderDetectorTrainerTool());
+    tools.add(new GenderDetectorEvaluatorTool());
 
     // Language Detector
     tools.add(new LanguageDetectorTool());

@@ -17,8 +17,8 @@
 
 package opennlp.tools.gender;
 
-public interface GenderDetector {
+import opennlp.tools.util.eval.EvaluationMonitor;
 
-  String genderDetect(String[] person);
-
+public interface GenderDetectorEvaluationMonitor extends
+        EvaluationMonitor<GenderSample> {
 }

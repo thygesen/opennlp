@@ -35,15 +35,15 @@ public class GenderDetectorME implements GenderDetector {
 
   private final ContextGenerator contextGenerator;
 
-  public GenderDetectorME(GenderDetectorModel model, GenderDetectorFactory factory) {
+  public GenderDetectorME(GenderDetectorModel model) {
     this.model = model.getMaxentModel();
     this.contextGenerator = model.getFactory().getContextGenerator();
   }
 
   @Override
-  public String genderDetect(String s) {
-    // TODO: missing impl
-    return null;
+  public String genderDetect(String[] tokens) {
+    double[] eval = model.eval(contextGenerator.getContext(tokens));
+    return model.getBestOutcome(eval);
   }
 
   public static GenderDetectorModel train(String language, ObjectStream<GenderSample> samples,

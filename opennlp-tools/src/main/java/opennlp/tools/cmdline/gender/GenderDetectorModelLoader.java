@@ -15,10 +15,22 @@
  * limitations under the License.
  */
 
-package opennlp.tools.gender;
+package opennlp.tools.cmdline.gender;
 
-public interface GenderDetector {
+import java.io.IOException;
+import java.io.InputStream;
 
-  String genderDetect(String[] person);
+import opennlp.tools.cmdline.ModelLoader;
+import opennlp.tools.gender.GenderDetectorModel;
 
+final class GenderDetectorModelLoader extends ModelLoader<GenderDetectorModel> {
+
+  public GenderDetectorModelLoader() {
+    super("Gender Detector");
+  }
+
+  @Override
+  protected GenderDetectorModel loadModel(InputStream modelIn) throws IOException {
+    return new GenderDetectorModel(modelIn);
+  }
 }

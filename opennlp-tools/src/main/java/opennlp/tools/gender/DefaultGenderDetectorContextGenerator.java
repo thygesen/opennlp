@@ -21,12 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import opennlp.tools.ml.maxent.ContextGenerator;
-import opennlp.tools.ngram.NGramModel;
-import opennlp.tools.util.StringList;
 import opennlp.tools.util.normalizer.AggregateCharSequenceNormalizer;
 import opennlp.tools.util.normalizer.CharSequenceNormalizer;
-
-
 
 /**
  * A context generator for gender detector.
@@ -44,6 +40,25 @@ public class DefaultGenderDetectorContextGenerator implements ContextGenerator<S
     this.normalizer = new AggregateCharSequenceNormalizer(normalizers);
   }
 
+  private static int[] orderCountChar(String token) {
+    int order_a = 0;
+    int order_y = 0;
+    int order_o = 0;
+    int count_a = 0;
+    for (int i = 0; i < token.length(); i++) {
+      if (token.charAt(i) == 'a') {
+        order_a += i + 1;
+        count_a += 1;
+      } else if (token.charAt(i) == 'y') {
+        order_y += i + 1;
+      } else if (token.charAt(i) == 'o') {
+        order_o += i + 1;
+      }
+
+    }
+    return new int[] {count_a, order_a, order_o, order_y};
+  }
+
   /**
    * Generates the context for person tokens
    * @param tokens person tokens to extract context from
@@ -53,22 +68,29 @@ public class DefaultGenderDetectorContextGenerator implements ContextGenerator<S
   public String[] getContext(String[] tokens) {
     Collection<String> context = new ArrayList<>();
 
-    for (int i = 0; i < tokens.length; i++) {
-
-      // last char
-      context.add(String.format("gl%d=%s", i, tokens[i].charAt(tokens[i].length() - 1)));
-
-      // ngrams
-      NGramModel model = new NGramModel();
-      model.add(normalizer.normalize(tokens[i]), 2, 3);
-
-      // do i need a feature prefix?
-      for (StringList tokenList : model) {
-        if (tokenList.size() > 0) {
-          context.add(tokenList.getToken(0));
-        }
-      }
+    // last char (first name)
+    if (tokens.length > 0) {
+      context.add(String.format("glst%d=%s", 0, tokens[0].charAt(tokens[0].length() - 1)));
+      if (tokens[0].length() > 1)
+        context.add(String.format("g2lst%d=%s", 0, tokens[0].charAt(tokens[0].length() - 2)));
+      int[] counts = orderCountChar(tokens[0]);
+      context.add(String.format("gca0=%d", counts[0]));
+      context.add(String.format("goa0=%d", counts[1]));
+      context.add(String.format("goo0=%d", counts[2]));
+      context.add(String.format("goy0=%d", counts[3]));
     }
+    // last char (middle name)
+    if (tokens.length > 2) {
+      context.add(String.format("glst1=%s", tokens[1].charAt(tokens[1].length() - 1)));
+      if (tokens[1].length() > 1)
+        context.add(String.format("g2lst1=%s", tokens[1].charAt(tokens[1].length() - 2)));
+    }
+
+    int idx = tokens.length - 1;
+    if (tokens[idx].length() > 3)
+      context.add(String.format("glst=%s", tokens[idx].substring(tokens[idx].length() - 3)));
+    else
+      context.add(String.format("glst=%s", tokens[idx]));
 
     return context.toArray(new String[context.size()]);
   }

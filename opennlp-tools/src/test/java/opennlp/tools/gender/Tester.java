@@ -17,8 +17,29 @@
 
 package opennlp.tools.gender;
 
-public interface GenderDetector {
+import java.io.File;
+import java.io.IOException;
 
-  String genderDetect(String[] person);
+public class Tester {
 
+  public static void main(String[] args) throws IOException {
+
+    GenderDetectorModel model = new GenderDetectorModel(new File("gender.bin"));
+
+    GenderDetector detector = new GenderDetectorME(model);
+
+    String[] maleSamples = {"Peter Thygesen", "Charles Pole", "René Ferrié"};
+
+    String[] femaleSamples = {"Melody Swartz", "Carol Franklin", "Amanda Jones"};
+
+    for (int i = 0; i < maleSamples.length; i++) {
+      String[] tokens = maleSamples[i].split("\\s+");
+      System.out.println(detector.genderDetect(tokens));
+    }
+
+    for (int i = 0; i < femaleSamples.length; i++) {
+      String[] tokens = femaleSamples[i].split("\\s+");
+      System.out.println(detector.genderDetect(tokens));
+    }
+  }
 }
