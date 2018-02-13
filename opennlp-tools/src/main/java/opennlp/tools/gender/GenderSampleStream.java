@@ -17,23 +17,28 @@
 
 package opennlp.tools.gender;
 
-import opennlp.tools.ml.maxent.ContextGenerator;
-import opennlp.tools.util.BaseToolFactory;
-import opennlp.tools.util.InvalidFormatException;
+import java.io.IOException;
 
-public class GenderDetectorFactory extends BaseToolFactory {
+import opennlp.tools.sentdetect.EmptyLinePreprocessorStream;
+import opennlp.tools.util.FilterObjectStream;
+import opennlp.tools.util.ObjectStream;
 
-  public ContextGenerator<String[]> getContextGenerator() {
-    return new DefaultGenderDetectorContextGenerator();
-  }
+public class GenderSampleStream extends FilterObjectStream<String,GenderSample> {
 
-  public static GenderDetectorFactory create() {
-    // extension loader?
-    return new GenderDetectorFactory();
+  public GenderSampleStream(ObjectStream<String> rows) {
+    super(new EmptyLinePreprocessorStream(rows));
   }
 
   @Override
-  public void validateArtifactMap() throws InvalidFormatException {
-    // no additional artifacts
+  public GenderSample read() throws IOException {
+
+    String row;
+    String[] tuple = null;
+    while ((row = samples.read()) != null && !row.equals("")) {
+      tuple = row.split("\\t");
+    }
+    if (tuple != null && tuple.length == 2)
+      return new GenderSample(tuple[1], tuple[0].split("\\s+"));
+    return null;
   }
 }

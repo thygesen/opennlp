@@ -15,25 +15,14 @@
  * limitations under the License.
  */
 
-package opennlp.tools.gender;
+package opennlp.tools.cmdline.gender;
 
-import opennlp.tools.ml.maxent.ContextGenerator;
-import opennlp.tools.util.BaseToolFactory;
-import opennlp.tools.util.InvalidFormatException;
+import java.io.File;
 
-public class GenderDetectorFactory extends BaseToolFactory {
+import opennlp.tools.cmdline.ArgumentParser;
+import opennlp.tools.cmdline.params.BasicTrainingParams;
 
-  public ContextGenerator<String[]> getContextGenerator() {
-    return new DefaultGenderDetectorContextGenerator();
-  }
-
-  public static GenderDetectorFactory create() {
-    // extension loader?
-    return new GenderDetectorFactory();
-  }
-
-  @Override
-  public void validateArtifactMap() throws InvalidFormatException {
-    // no additional artifacts
-  }
+public interface TrainingParams extends BasicTrainingParams {
+  @ArgumentParser.ParameterDescription(valueName = "modelFile", description = "output model file.")
+  File getModel();
 }

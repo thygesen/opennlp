@@ -17,16 +17,16 @@
 
 package opennlp.tools.gender;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import opennlp.tools.ml.maxent.ContextGenerator;
 import opennlp.tools.ngram.NGramModel;
 import opennlp.tools.util.StringList;
-import opennlp.tools.util.StringUtil;
 import opennlp.tools.util.normalizer.AggregateCharSequenceNormalizer;
 import opennlp.tools.util.normalizer.CharSequenceNormalizer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+
 
 /**
  * A context generator for gender detector.
@@ -53,7 +53,7 @@ public class DefaultGenderDetectorContextGenerator implements ContextGenerator<S
   public String[] getContext(String[] tokens) {
     Collection<String> context = new ArrayList<>();
 
-    for (int i=0; i<tokens.length; i++) {
+    for (int i = 0; i < tokens.length; i++) {
 
       // last char
       context.add(String.format("gl%d=%s", i, tokens[i].charAt(tokens[0].length() - 1)));
