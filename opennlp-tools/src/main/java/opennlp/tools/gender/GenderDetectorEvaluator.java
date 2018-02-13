@@ -23,8 +23,9 @@ import opennlp.tools.util.eval.Mean;
 
 public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
 
-  //private FMeasure fmeasure = new FMeasure();
   private Mean accuracy = new Mean();
+  private int right = 0;
+  private int wrong = 0;
 
   /**
    * The {@link GenderDetector} used to create the predicted
@@ -64,9 +65,11 @@ public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
 
     if (reference.getGender().equals(predicted)) {
       accuracy.add(1);
+      right++;
     }
     else {
       accuracy.add(0);
+      wrong++;
     }
 
     //fmeasure.updateScores(new Object[] {reference.getGender()}, new Object[]{prediction});
@@ -88,6 +91,8 @@ public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
   @Override
   public String toString() {
     return "Accuracy: " + accuracy.mean() + "\n" +
-            "Number of documents: " + accuracy.count();
-  }
+            "Number of documents: " + accuracy.count() + "\n" +
+            "Correct: " + right + "\n" +
+            "Misclassified: " + wrong + "\n";
+   }
 }

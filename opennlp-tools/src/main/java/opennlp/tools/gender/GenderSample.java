@@ -40,7 +40,7 @@ public class GenderSample implements Serializable {
 
   @Override
   public String toString() {
-    return gender + '\t' +  context;
+    return gender + '\t' +  String.join(" ", context);
   }
 
   @Override
