@@ -32,13 +32,12 @@ public class GenderSampleStream extends FilterObjectStream<String,GenderSample> 
   @Override
   public GenderSample read() throws IOException {
 
-    String row;
-    String[] tuple = null;
-    while ((row = samples.read()) != null && !row.equals("")) {
-      tuple = row.split("\\t");
+    String row = samples.read();
+    if (row != null && !"".equals(row)) {
+      String[] tuple = row.split("\\t");
+      if (tuple != null && tuple.length == 2)
+        return new GenderSample(tuple[1], tuple[0].split("\\s+"));
     }
-    if (tuple != null && tuple.length == 2)
-      return new GenderSample(tuple[1], tuple[0].split("\\s+"));
     return null;
   }
 }

@@ -56,7 +56,7 @@ public class DefaultGenderDetectorContextGenerator implements ContextGenerator<S
     for (int i = 0; i < tokens.length; i++) {
 
       // last char
-      context.add(String.format("gl%d=%s", i, tokens[i].charAt(tokens[0].length() - 1)));
+      context.add(String.format("gl%d=%s", i, tokens[i].charAt(tokens[i].length() - 1)));
 
       // ngrams
       NGramModel model = new NGramModel();
