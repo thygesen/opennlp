@@ -17,15 +17,18 @@
 
 package opennlp.tools.gender;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import opennlp.tools.util.eval.Evaluator;
-import opennlp.tools.util.eval.FMeasure;
 import opennlp.tools.util.eval.Mean;
 
 public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
 
   private Mean accuracy = new Mean();
-  private int right = 0;
-  private int wrong = 0;
+  private Map<String,Integer> right = new HashMap<>();
+  private Map<String,Integer> wrong = new HashMap<>();
 
   /**
    * The {@link GenderDetector} used to create the predicted
@@ -65,14 +68,20 @@ public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
 
     if (reference.getGender().equals(predicted)) {
       accuracy.add(1);
-      right++;
+      if (right.containsKey(predicted)) {
+        right.put(predicted, right.get(predicted) + 1);
+      } else {
+        right.put(predicted, 1);
+      }
     }
     else {
       accuracy.add(0);
-      wrong++;
+      if (wrong.containsKey(predicted)) {
+        wrong.put(predicted, wrong.get(predicted) + 1);
+      } else {
+        wrong.put(predicted, 1);
+      }
     }
-
-    //fmeasure.updateScores(new Object[] {reference.getGender()}, new Object[]{prediction});
 
     return new GenderSample(predicted, reference.getContext());
   }
@@ -81,18 +90,22 @@ public class GenderDetectorEvaluator extends Evaluator<GenderSample> {
     return accuracy.mean();
   }
 
-  public long getDocumentCount() {
-    return accuracy.count();
-  }
+
 
   /**
    * Represents this objects as human readable {@link String}.
    */
   @Override
   public String toString() {
+    // move to report
+    String correct = "Correct:\n" + right.entrySet().stream()
+            .map(e -> String.format("\t%s: %d", e.getKey(), e.getValue()))
+            .collect(Collectors.joining("\n"));
+    String misclassified = "Misclassified:\n" + wrong.entrySet().stream()
+            .map(e -> String.format("\t%s: %d", e.getKey(), e.getValue()))
+            .collect(Collectors.joining("\n"));
     return "Accuracy: " + accuracy.mean() + "\n" +
             "Number of documents: " + accuracy.count() + "\n" +
-            "Correct: " + right + "\n" +
-            "Misclassified: " + wrong + "\n";
-   }
+            correct + "\n" + misclassified + "\n";
+  }
 }
