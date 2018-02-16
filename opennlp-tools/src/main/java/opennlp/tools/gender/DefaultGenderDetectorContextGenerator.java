@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import opennlp.tools.ml.maxent.ContextGenerator;
+import opennlp.tools.ngram.NGramModel;
+import opennlp.tools.util.StringList;
 import opennlp.tools.util.normalizer.AggregateCharSequenceNormalizer;
 import opennlp.tools.util.normalizer.CharSequenceNormalizer;
 
@@ -70,15 +72,31 @@ public class DefaultGenderDetectorContextGenerator implements ContextGenerator<S
 
     // last char (first name)
     if (tokens.length > 0) {
-      context.add(String.format("glst%d=%s", 0, tokens[0].charAt(tokens[0].length() - 1)));
+
+      // last char
+      context.add(String.format("glst0=%s", tokens[0].charAt(tokens[0].length() - 1)));
+
+      // second last char
       if (tokens[0].length() > 1)
-        context.add(String.format("g2lst%d=%s", 0, tokens[0].charAt(tokens[0].length() - 2)));
+        context.add(String.format("g2lst0=%s", tokens[0].charAt(tokens[0].length() - 2)));
+
       int[] counts = orderCountChar(tokens[0]);
       context.add(String.format("gca0=%d", counts[0]));
       context.add(String.format("goa0=%d", counts[1]));
       context.add(String.format("goo0=%d", counts[2]));
       context.add(String.format("goy0=%d", counts[3]));
+
+      NGramModel model = new NGramModel();
+      model.add(tokens[0], 2, 3);
+      int i = 0;
+      for (StringList tokenList : model) {
+        if (tokenList.size() > 0) {
+          context.add(String.format("g%d=%s", i, tokenList.getToken(0)));
+          i++;
+        }
+      }
     }
+
     // last char (middle name)
     if (tokens.length > 2) {
       context.add(String.format("glst1=%s", tokens[1].charAt(tokens[1].length() - 1)));
