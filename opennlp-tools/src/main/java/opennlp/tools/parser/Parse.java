@@ -21,7 +21,6 @@ package opennlp.tools.parser;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -184,7 +183,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
 
     if (derivation != null) {
       p.derivation = new StringBuffer(100);
-      p.derivation.append(this.derivation.toString());
+      p.derivation.append(this.derivation);
     }
     p.label = this.label;
     return (p);
@@ -371,8 +370,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
       //System.out.print(head+" ");
       //System.out.print(df.format(prob)+" ");
     }
-    for (Iterator<Parse> i = parts.iterator(); i.hasNext();) {
-      Parse c = i.next();
+    for (Parse c : parts) {
       Span s = c.span;
       if (start < s.getStart()) {
         //System.out.println("pre "+start+" "+s.getStart());
@@ -408,7 +406,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
     //System.err.println("Parse.getTagSequenceProb: "+type+" "+this);
     if (parts.size() == 1 && (parts.get(0)).type.equals(AbstractBottomUpParser.TOK_NODE)) {
       //System.err.println(this+" "+prob);
-      return (Math.log(prob));
+      return (StrictMath.log(prob));
     }
     else if (parts.size() == 0) {
       System.err.println("Parse.getTagSequenceProb: Wrong base case!");
@@ -416,8 +414,8 @@ public class Parse implements Cloneable, Comparable<Parse> {
     }
     else {
       double sum = 0.0;
-      for (Iterator<Parse> pi = parts.iterator(); pi.hasNext();) {
-        sum += pi.next().getTagSequenceProb();
+      for (Parse part : parts) {
+        sum += part.getTagSequenceProb();
       }
       return sum;
     }
@@ -757,8 +755,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
    */
   public void updateHeads(HeadRules rules) {
     if (parts != null && parts.size() != 0) {
-      for (int pi = 0, pn = parts.size(); pi < pn; pi++) {
-        Parse c = parts.get(pi);
+      for (Parse c : parts) {
         c.updateHeads(rules);
       }
       this.head = rules.getHead(parts.toArray(new Parse[parts.size()]), type);
@@ -883,14 +880,13 @@ public class Parse implements Cloneable, Comparable<Parse> {
     String txt = text.toString();
     int tokenIndex = -1;
     Parse p = new Parse(txt, new Span(0, txt.length()), AbstractBottomUpParser.TOP_NODE, 1,0);
-    for (int ci = 0; ci < cons.size(); ci++) {
-      Constituent con = cons.get(ci);
+    for (Constituent con : cons) {
       String type = con.getLabel();
       if (!type.equals(AbstractBottomUpParser.TOP_NODE)) {
         if (AbstractBottomUpParser.TOK_NODE.equals(type)) {
           tokenIndex++;
         }
-        Parse c = new Parse(txt, con.getSpan(), type, 1,tokenIndex);
+        Parse c = new Parse(txt, con.getSpan(), type, 1, tokenIndex);
         //System.err.println("insert["+ci+"] "+type+" "+c.toString()+" "+c.hashCode());
         p.insert(c);
         //codeTree(p);
@@ -934,8 +930,8 @@ public class Parse implements Cloneable, Comparable<Parse> {
    */
   public boolean isFlat() {
     boolean flat = true;
-    for (int ci = 0; ci < parts.size(); ci++) {
-      flat &= (parts.get(ci)).isPosTag();
+    for (Parse part : parts) {
+      flat &= part.isPosTag();
     }
     return flat;
   }
@@ -955,8 +951,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
    */
   public Parse[] getTagNodes() {
     List<Parse> tags = new LinkedList<>();
-    List<Parse> nodes = new LinkedList<>();
-    nodes.addAll(this.parts);
+    List<Parse> nodes = new LinkedList<>(this.parts);
     while (nodes.size() != 0) {
       Parse p = nodes.remove(0);
       if (p.isPosTag()) {
@@ -971,8 +966,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
 
   public Parse[] getTokenNodes() {
     List<Parse> tokens = new LinkedList<>();
-    List<Parse> nodes = new LinkedList<>();
-    nodes.addAll(this.parts);
+    List<Parse> nodes = new LinkedList<>(this.parts);
     while (nodes.size() != 0) {
       Parse p = nodes.remove(0);
       if (p.getType().equals(AbstractBottomUpParser.TOK_NODE)) {

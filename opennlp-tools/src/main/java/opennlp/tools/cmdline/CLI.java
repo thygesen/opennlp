@@ -186,7 +186,7 @@ public final class CLI {
   }
 
   private static void usage() {
-    System.out.print("OpenNLP " + Version.currentVersion().toString() + ". ");
+    System.out.print("OpenNLP " + Version.currentVersion() + ". ");
     System.out.println("Usage: " + CMD + " TOOL");
     System.out.println("where TOOL is one of:");
 
@@ -203,7 +203,7 @@ public final class CLI {
 
       System.out.print("  " + tool.getName());
 
-      for (int i = 0; i < Math.abs(tool.getName().length() - numberOfSpaces); i++) {
+      for (int i = 0; i < StrictMath.abs(tool.getName().length() - numberOfSpaces); i++) {
         System.out.print(" ");
       }
 

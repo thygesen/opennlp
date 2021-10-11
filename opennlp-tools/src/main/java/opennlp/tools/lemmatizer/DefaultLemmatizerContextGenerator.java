@@ -42,7 +42,7 @@ public class DefaultLemmatizerContextGenerator implements LemmatizerContextGener
   protected static String[] getPrefixes(String lex) {
     String[] prefs = new String[PREFIX_LENGTH];
     for (int li = 1; li < PREFIX_LENGTH; li++) {
-      prefs[li] = lex.substring(0, Math.min(li + 1, lex.length()));
+      prefs[li] = lex.substring(0, StrictMath.min(li + 1, lex.length()));
     }
     return prefs;
   }
@@ -50,7 +50,7 @@ public class DefaultLemmatizerContextGenerator implements LemmatizerContextGener
   protected static String[] getSuffixes(String lex) {
     String[] suffs = new String[SUFFIX_LENGTH];
     for (int li = 1; li < SUFFIX_LENGTH; li++) {
-      suffs[li] = lex.substring(Math.max(lex.length() - li - 1, 0));
+      suffs[li] = lex.substring(StrictMath.max(lex.length() - li - 1, 0));
     }
     return suffs;
   }
@@ -89,13 +89,13 @@ public class DefaultLemmatizerContextGenerator implements LemmatizerContextGener
 
     // do some basic suffix analysis
     String[] suffs = getSuffixes(lex);
-    for (int i = 0; i < suffs.length; i++) {
-      features.add("suf=" + suffs[i]);
+    for (String suff : suffs) {
+      features.add("suf=" + suff);
     }
 
     String[] prefs = getPrefixes(lex);
-    for (int i = 0; i < prefs.length; i++) {
-      features.add("pre=" + prefs[i]);
+    for (String pref : prefs) {
+      features.add("pre=" + pref);
     }
     // see if the word has any special characters
     if (lex.indexOf('-') != -1) {

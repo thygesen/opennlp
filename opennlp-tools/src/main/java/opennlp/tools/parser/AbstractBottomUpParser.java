@@ -203,9 +203,9 @@ public abstract class AbstractBottomUpParser implements Parser {
    */
   public static void setParents(Parse p) {
     Parse[] children = p.getChildren();
-    for (int ci = 0; ci < children.length; ci++) {
-      children[ci].setParent(p);
-      setParents(children[ci]);
+    for (Parse child : children) {
+      child.setParent(p);
+      setParents(child);
     }
   }
 
@@ -318,19 +318,18 @@ public abstract class AbstractBottomUpParser implements Parser {
           nd = advanceParses(tp, Q);
         }
         if (nd != null) {
-          for (int k = 0, kl = nd.length; k < kl; k++) {
-            if (nd[k].complete()) {
-              advanceTop(nd[k]);
-              if (nd[k].getProb() > bestComplete) {
-                bestComplete = nd[k].getProb();
+          for (Parse parse : nd) {
+            if (parse.complete()) {
+              advanceTop(parse);
+              if (parse.getProb() > bestComplete) {
+                bestComplete = parse.getProb();
               }
-              if (nd[k].getProb() < minComplete) {
-                minComplete = nd[k].getProb();
+              if (parse.getProb() < minComplete) {
+                minComplete = parse.getProb();
               }
-              completeParses.add(nd[k]);
-            }
-            else {
-              ndh.add(nd[k]);
+              completeParses.add(parse);
+            } else {
+              ndh.add(parse);
             }
           }
         }
@@ -359,7 +358,7 @@ public abstract class AbstractBottomUpParser implements Parser {
     else {
       List<Parse> topParses = new ArrayList<>(numParses);
       while (!completeParses.isEmpty() && topParses.size() < numParses) {
-        Parse tp = completeParses.last();
+        Parse tp = completeParses.first();
         completeParses.remove(tp);
         topParses.add(tp);
         //parses.remove(tp);
@@ -414,7 +413,7 @@ public abstract class AbstractBottomUpParser implements Parser {
         // if (j != tags.length) {System.err.println(words[j]+" "
         // +ptags[j]+" "+tags[j]+" "+probs.get(j));}
         if (j != tags.length) {
-          newParses[si].addProb(Math.log(probs[j]));
+          newParses[si].addProb(StrictMath.log(probs[j]));
         }
         // if continue just update end chunking tag don't use contTypeMap
         if (j != tags.length && tags[j].startsWith(CONT)) {
@@ -484,7 +483,7 @@ public abstract class AbstractBottomUpParser implements Parser {
         //System.err.println("inserting tag "+tags[j]);
         double prob = probs[j];
         newParses[i].insert(new Parse(word.getText(), word.getSpan(), tags[j], prob,j));
-        newParses[i].addProb(Math.log(prob));
+        newParses[i].addProb(StrictMath.log(prob));
       }
     }
     return newParses;

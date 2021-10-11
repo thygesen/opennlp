@@ -70,7 +70,7 @@ public class DefaultPOSContextGenerator implements POSContextGenerator {
   protected static String[] getPrefixes(String lex) {
     String[] prefs = new String[PREFIX_LENGTH];
     for (int li = 0; li < PREFIX_LENGTH; li++) {
-      prefs[li] = lex.substring(0, Math.min(li + 1, lex.length()));
+      prefs[li] = lex.substring(0, StrictMath.min(li + 1, lex.length()));
     }
     return prefs;
   }
@@ -78,7 +78,7 @@ public class DefaultPOSContextGenerator implements POSContextGenerator {
   protected static String[] getSuffixes(String lex) {
     String[] suffs = new String[SUFFIX_LENGTH];
     for (int li = 0; li < SUFFIX_LENGTH; li++) {
-      suffs[li] = lex.substring(Math.max(lex.length() - li - 1, 0));
+      suffs[li] = lex.substring(StrictMath.max(lex.length() - li - 1, 0));
     }
     return suffs;
   }
@@ -151,13 +151,13 @@ public class DefaultPOSContextGenerator implements POSContextGenerator {
     if (dict == null || !dict.contains(new StringList(lex))) {
       // do some basic suffix analysis
       String[] suffs = getSuffixes(lex);
-      for (int i = 0; i < suffs.length; i++) {
-        e.add("suf=" + suffs[i]);
+      for (String suff : suffs) {
+        e.add("suf=" + suff);
       }
 
       String[] prefs = getPrefixes(lex);
-      for (int i = 0; i < prefs.length; i++) {
-        e.add("pre=" + prefs[i]);
+      for (String pref : prefs) {
+        e.add("pre=" + pref);
       }
       // see if the word has any special characters
       if (lex.indexOf('-') != -1) {

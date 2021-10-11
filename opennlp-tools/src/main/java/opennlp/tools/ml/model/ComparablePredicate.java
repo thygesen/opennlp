@@ -37,7 +37,7 @@ public class ComparablePredicate implements Comparable<ComparablePredicate> {
   }
 
   public int compareTo(ComparablePredicate cp) {
-    int smallerLength = Math.min(outcomes.length, cp.outcomes.length);
+    int smallerLength = StrictMath.min(outcomes.length, cp.outcomes.length);
 
     for (int i = 0; i < smallerLength; i++) {
       int compareOutcomes = Integer.compare(outcomes[i], cp.outcomes[i]);
@@ -46,12 +46,7 @@ public class ComparablePredicate implements Comparable<ComparablePredicate> {
       }
     }
 
-    int compareOutcomesLength = Integer.compare(outcomes.length, cp.outcomes.length);
-    if (compareOutcomesLength != 0) {
-      return compareOutcomesLength;
-    }
-
-    return 0;
+    return Integer.compare(outcomes.length, cp.outcomes.length);
   }
 
   @Override
