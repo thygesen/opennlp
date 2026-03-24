@@ -17,8 +17,8 @@
 
 package opennlp.tools.util.eval;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import opennlp.tools.util.Span;
 
@@ -29,7 +29,7 @@ public class FMeasureTest {
 
   private static final double DELTA = 1.0E-9d;
 
-  private Span[] gold = {
+  private final Span[] gold = {
       new Span(8, 9),
       new Span(9, 10),
       new Span(10, 12),
@@ -38,7 +38,7 @@ public class FMeasureTest {
       new Span(15, 16)
   };
 
-  private Span[] predicted = {
+  private final Span[] predicted = {
       new Span(14, 15),
       new Span(15, 16),
       new Span(100, 120),
@@ -46,7 +46,7 @@ public class FMeasureTest {
       new Span(220, 230)
   };
 
-  private Span[] predictedCompletelyDistinct = {
+  private final Span[] predictedCompletelyDistinct = {
       new Span(100, 120),
       new Span(210, 220),
       new Span(211, 220),
@@ -54,7 +54,7 @@ public class FMeasureTest {
       new Span(220, 230)
   };
 
-  private Span[] goldToMerge = {
+  private final Span[] goldToMerge = {
       new Span(8, 9),
       new Span(9, 10),
       new Span(11, 11),
@@ -64,7 +64,7 @@ public class FMeasureTest {
       new Span(18, 19),
   };
 
-  private Span[] predictedToMerge = {
+  private final Span[] predictedToMerge = {
       new Span(8, 9),
       new Span(14, 15),
       new Span(15, 16),
@@ -75,55 +75,55 @@ public class FMeasureTest {
 
 
   /**
-   * Test for the {@link EvaluatorUtil#countTruePositives(Span[], Span[])} method.
+   * Test for the {@link FMeasure#countTruePositives(Object[], Object[])} method.
    */
   @Test
   public void testCountTruePositives() {
-    Assert.assertEquals(0, FMeasure.countTruePositives(new Object[] {}, new Object[] {}));
-    Assert.assertEquals(gold.length, FMeasure.countTruePositives(gold, gold));
-    Assert.assertEquals(0, FMeasure.countTruePositives(gold, predictedCompletelyDistinct));
-    Assert.assertEquals(2, FMeasure.countTruePositives(gold, predicted));
+    Assertions.assertEquals(0, FMeasure.countTruePositives(new Object[] {}, new Object[] {}));
+    Assertions.assertEquals(gold.length, FMeasure.countTruePositives(gold, gold));
+    Assertions.assertEquals(0, FMeasure.countTruePositives(gold, predictedCompletelyDistinct));
+    Assertions.assertEquals(2, FMeasure.countTruePositives(gold, predicted));
   }
 
   /**
-   * Test for the {@link EvaluatorUtil#precision(Span[], Span[])} method.
+   * Test for the {@link FMeasure#precision(Object[], Object[])} method.
    */
   @Test
   public void testPrecision() {
-    Assert.assertEquals(1.0d, FMeasure.precision(gold, gold), DELTA);
-    Assert.assertEquals(0, FMeasure.precision(gold, predictedCompletelyDistinct), DELTA);
-    Assert.assertEquals(Double.NaN, FMeasure.precision(gold, new Object[] {}), DELTA);
-    Assert.assertEquals(0, FMeasure.precision(new Object[] {}, gold), DELTA);
-    Assert.assertEquals(2d / predicted.length, FMeasure.precision(gold, predicted), DELTA);
+    Assertions.assertEquals(1.0d, FMeasure.precision(gold, gold), DELTA);
+    Assertions.assertEquals(0, FMeasure.precision(gold, predictedCompletelyDistinct), DELTA);
+    Assertions.assertEquals(Double.NaN, FMeasure.precision(gold, new Object[] {}), DELTA);
+    Assertions.assertEquals(0, FMeasure.precision(new Object[] {}, gold), DELTA);
+    Assertions.assertEquals(2d / predicted.length, FMeasure.precision(gold, predicted), DELTA);
   }
 
   /**
-   * Test for the {@link EvaluatorUtil#recall(Span[], Span[])} method.
+   * Test for the {@link FMeasure#recall(Object[], Object[])} method.
    */
   @Test
   public void testRecall() {
-    Assert.assertEquals(1.0d, FMeasure.recall(gold, gold), DELTA);
-    Assert.assertEquals(0, FMeasure.recall(gold, predictedCompletelyDistinct), DELTA);
-    Assert.assertEquals(0, FMeasure.recall(gold, new Object[] {}), DELTA);
-    Assert.assertEquals(Double.NaN, FMeasure.recall(new Object[] {}, gold), DELTA);
-    Assert.assertEquals(2d / gold.length, FMeasure.recall(gold, predicted), DELTA);
+    Assertions.assertEquals(1.0d, FMeasure.recall(gold, gold), DELTA);
+    Assertions.assertEquals(0, FMeasure.recall(gold, predictedCompletelyDistinct), DELTA);
+    Assertions.assertEquals(0, FMeasure.recall(gold, new Object[] {}), DELTA);
+    Assertions.assertEquals(Double.NaN, FMeasure.recall(new Object[] {}, gold), DELTA);
+    Assertions.assertEquals(2d / gold.length, FMeasure.recall(gold, predicted), DELTA);
   }
 
   @Test
   public void testEmpty() {
     FMeasure fm = new FMeasure();
-    Assert.assertEquals(-1, fm.getFMeasure(), DELTA);
-    Assert.assertEquals(0, fm.getRecallScore(), DELTA);
-    Assert.assertEquals(0, fm.getPrecisionScore(), DELTA);
+    Assertions.assertEquals(-1, fm.getFMeasure(), DELTA);
+    Assertions.assertEquals(0, fm.getRecallScore(), DELTA);
+    Assertions.assertEquals(0, fm.getPrecisionScore(), DELTA);
   }
 
   @Test
   public void testPerfect() {
     FMeasure fm = new FMeasure();
     fm.updateScores(gold, gold);
-    Assert.assertEquals(1, fm.getFMeasure(), DELTA);
-    Assert.assertEquals(1, fm.getRecallScore(), DELTA);
-    Assert.assertEquals(1, fm.getPrecisionScore(), DELTA);
+    Assertions.assertEquals(1, fm.getFMeasure(), DELTA);
+    Assertions.assertEquals(1, fm.getRecallScore(), DELTA);
+    Assertions.assertEquals(1, fm.getPrecisionScore(), DELTA);
   }
 
   @Test
@@ -147,10 +147,10 @@ public class FMeasureTest {
     double tp2 = FMeasure.countTruePositives(goldToMerge, predictedToMerge);
 
 
-    Assert.assertEquals((tp1 + tp2) / (target1 + target2), fm.getRecallScore(), DELTA);
-    Assert.assertEquals((tp1 + tp2) / (selected1 + selected2), fm.getPrecisionScore(), DELTA);
+    Assertions.assertEquals((tp1 + tp2) / (target1 + target2), fm.getRecallScore(), DELTA);
+    Assertions.assertEquals((tp1 + tp2) / (selected1 + selected2), fm.getPrecisionScore(), DELTA);
 
-    Assert.assertEquals(fm.getRecallScore(), fmMerge.getRecallScore(), DELTA);
-    Assert.assertEquals(fm.getPrecisionScore(), fmMerge.getPrecisionScore(), DELTA);
+    Assertions.assertEquals(fm.getRecallScore(), fmMerge.getRecallScore(), DELTA);
+    Assertions.assertEquals(fm.getPrecisionScore(), fmMerge.getPrecisionScore(), DELTA);
   }
 }

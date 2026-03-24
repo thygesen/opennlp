@@ -9,7 +9,7 @@ to ensure the following steps have been taken:
 
 - [ ] Does your PR title start with OPENNLP-XXXX where XXXX is the JIRA number you are trying to resolve? Pay particular attention to the hyphen "-" character.
 
-- [ ] Has your PR been rebased against the latest commit within the target branch (typically master)?
+- [ ] Has your PR been rebased against the latest commit within the target branch (typically main)?
 
 - [ ] Is your initial contribution a single, squashed commit?
 
@@ -24,4 +24,4 @@ to ensure the following steps have been taken:
 - [ ] Have you ensured that format looks appropriate for the output in which it is rendered?
 
 ### Note:
-Please ensure that once the PR is submitted, you check travis-ci for build issues and submit an update to your PR as soon as possible.
+Please ensure that once the PR is submitted, you check GitHub Actions for build issues and submit an update to your PR as soon as possible.

@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import opennlp.tools.cmdline.lemmatizer.LemmaEvaluationErrorListener;
 import opennlp.tools.util.MockInputStreamFactory;
@@ -41,13 +41,14 @@ public class LemmatizerEvaluatorTest {
 
   /**
    * Checks the evaluator results against the results got using the conlleval,
-   * available at http://www.cnts.ua.ac.be/conll2000/chunking/output.html but
+   * available at <a href="https://www.cnts.ua.ac.be/conll2000/chunking/output.html">
+   *   https://www.cnts.ua.ac.be/conll2000/chunking/output.html</a> but
    * containing lemmas instead of chunks.
    *
-   * @throws IOException
+   * @throws IOException Thrown if IO errors occurred.
    */
   @Test
-  public void testEvaluator() throws IOException {
+  void testEvaluator() throws IOException {
     String inPredicted = "opennlp/tools/lemmatizer/output.txt";
     String inExpected = "opennlp/tools/lemmatizer/output.txt";
 
@@ -55,11 +56,11 @@ public class LemmatizerEvaluatorTest {
 
     DummyLemmaSampleStream predictedSample = new DummyLemmaSampleStream(
         new PlainTextByLineStream(
-          new MockInputStreamFactory(new File(inPredicted)), encoding), true);
+            new MockInputStreamFactory(new File(inPredicted)), encoding), true);
 
     DummyLemmaSampleStream expectedSample = new DummyLemmaSampleStream(
         new PlainTextByLineStream(
-          new MockInputStreamFactory(new File(inExpected)), encoding), false);
+            new MockInputStreamFactory(new File(inExpected)), encoding), false);
 
     Lemmatizer dummyLemmatizer = new DummyLemmatizer(predictedSample);
 
@@ -69,8 +70,8 @@ public class LemmatizerEvaluatorTest {
 
     evaluator.evaluate(expectedSample);
 
-    Assert.assertEquals(0.9877049180327869, evaluator.getWordAccuracy(), DELTA);
-    Assert.assertNotSame(stream.toString().length(), 0);
+    Assertions.assertEquals(0.9877049180327869, evaluator.getWordAccuracy(), DELTA);
+    Assertions.assertNotSame(0, stream.toString().length());
 
   }
 

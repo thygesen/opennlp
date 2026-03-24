@@ -18,20 +18,51 @@
 package opennlp.tools.langdetect;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import opennlp.tools.cmdline.langdetect.LanguageDetectorEvaluationErrorListener;
+import opennlp.tools.formats.ResourceAsStreamFactory;
+import opennlp.tools.util.Parameters;
+import opennlp.tools.util.PlainTextByLineStream;
+import opennlp.tools.util.TrainingParameters;
 
 
 public class LanguageDetectorEvaluatorTest {
 
+  static LanguageDetectorModel trainModel() throws Exception {
+    return trainModel(new LanguageDetectorFactory());
+  }
+
+  private static LanguageDetectorModel trainModel(LanguageDetectorFactory factory) throws Exception {
+    LanguageDetectorSampleStream sampleStream = createSampleStream();
+
+    TrainingParameters params = new TrainingParameters();
+    params.put(Parameters.ITERATIONS_PARAM, 100);
+    params.put(Parameters.CUTOFF_PARAM, 5);
+    params.put("DataIndexer", "TwoPass");
+    params.put(Parameters.ALGORITHM_PARAM, "NAIVEBAYES");
+
+    return LanguageDetectorME.train(sampleStream, params, factory);
+  }
+
+  private static LanguageDetectorSampleStream createSampleStream() throws IOException {
+
+    ResourceAsStreamFactory streamFactory = new ResourceAsStreamFactory(
+            LanguageDetectorEvaluatorTest.class, "/opennlp/tools/doccat/DoccatSample.txt");
+
+    PlainTextByLineStream lineStream = new PlainTextByLineStream(streamFactory, StandardCharsets.UTF_8);
+
+    return new LanguageDetectorSampleStream(lineStream);
+  }
+
   @Test
-  public void processSample() throws Exception {
-    LanguageDetectorModel model = LanguageDetectorMETest.trainModel();
+  void processSample() throws Exception {
+    LanguageDetectorModel model = trainModel();
     LanguageDetectorME langdetector = new LanguageDetectorME(model);
 
     final AtomicInteger correctCount = new AtomicInteger();
@@ -48,8 +79,8 @@ public class LanguageDetectorEvaluatorTest {
           }
 
           @Override
-          public void missclassified(LanguageSample reference,
-                                     LanguageSample prediction) {
+          public void misclassified(LanguageSample reference,
+                                    LanguageSample prediction) {
             incorrectCount.incrementAndGet();
           }
         }, new LanguageDetectorEvaluationErrorListener(outputStream));
@@ -64,17 +95,17 @@ public class LanguageDetectorEvaluatorTest {
         "escreve e faz palestras pelo mundo inteiro sobre anjos"));
 
 
-    Assert.assertEquals(1, correctCount.get());
-    Assert.assertEquals(2, incorrectCount.get());
+    Assertions.assertEquals(1, correctCount.get());
+    Assertions.assertEquals(2, incorrectCount.get());
 
-    Assert.assertEquals(3, evaluator.getDocumentCount());
-    Assert.assertEquals(0.33, evaluator.getAccuracy(), 0.01);
+    Assertions.assertEquals(3, evaluator.getDocumentCount());
+    Assertions.assertEquals(0.01, evaluator.getAccuracy(), 0.33);
 
-    String report = outputStream.toString(StandardCharsets.UTF_8.name());
+    String report = outputStream.toString(StandardCharsets.UTF_8);
 
-    Assert.assertEquals("Expected\tPredicted\tContext" + System.lineSeparator() +
+    Assertions.assertEquals("Expected\tPredicted\tContext" + System.lineSeparator() +
         "fra\tpob\tescreve e faz palestras pelo mundo inteiro sobre anjos" + System.lineSeparator() +
-        "fra\tpob\tescreve e faz palestras pelo mundo inteiro sobre anjos" +  System.lineSeparator(), report);
+        "fra\tpob\tescreve e faz palestras pelo mundo inteiro sobre anjos" + System.lineSeparator(), report);
   }
 
 }

@@ -21,18 +21,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import opennlp.tools.util.FilterObjectStream;
 import opennlp.tools.util.ObjectStream;
 
 /**
  * This dummy chunk sample stream reads a file formatted as described at
- * <a hraf="http://www.cnts.ua.ac.be/conll2000/chunking/output.html/">] and
+ * <a href="http://www.cnts.ua.ac.be/conll2000/chunking/output.html/">] and
  * can be used together with DummyChunker simulate a chunker.
  */
 public class DummyChunkSampleStream extends
     FilterObjectStream<String, ChunkSample> {
 
-  private boolean mIsPredicted;
+  private static final Logger logger = LoggerFactory.getLogger(DummyChunkSampleStream.class);
+
+  private final boolean mIsPredicted;
   private int count = 0;
 
   // the predicted flag sets if the stream will contain the expected or the
@@ -46,7 +51,7 @@ public class DummyChunkSampleStream extends
    * Returns a pair representing the expected and the predicted at 0: the
    * chunk tag according to the corpus at 1: the chunk tag predicted
    *
-   * @see opennlp.tools.util.ObjectStream#read()
+   * @see ObjectStream#read()
    */
   public ChunkSample read() throws IOException {
 
@@ -55,12 +60,11 @@ public class DummyChunkSampleStream extends
     List<String> chunkTags = new ArrayList<>();
     List<String> predictedChunkTags = new ArrayList<>();
 
-    for (String line = samples.read(); line != null && !line.equals(""); line = samples
+    for (String line = samples.read(); line != null && !line.isEmpty(); line = samples
         .read()) {
       String[] parts = line.split(" ");
       if (parts.length != 4) {
-        System.err.println("Skipping corrupt line " + count + ": "
-            + line);
+        logger.warn("Skipping corrupt line {}: {}", count, line);
       } else {
         toks.add(parts[0]);
         posTags.add(parts[1]);
@@ -70,16 +74,16 @@ public class DummyChunkSampleStream extends
       count++;
     }
 
-    if (toks.size() > 0) {
+    if (!toks.isEmpty()) {
       if (mIsPredicted) {
-        return new ChunkSample(toks.toArray(new String[toks.size()]),
-            posTags.toArray(new String[posTags.size()]),
+        return new ChunkSample(toks.toArray(new String[0]),
+            posTags.toArray(new String[0]),
             predictedChunkTags
-            .toArray(new String[predictedChunkTags.size()]));
+            .toArray(new String[0]));
       } else
-        return new ChunkSample(toks.toArray(new String[toks.size()]),
-            posTags.toArray(new String[posTags.size()]),
-            chunkTags.toArray(new String[chunkTags.size()]));
+        return new ChunkSample(toks.toArray(new String[0]),
+            posTags.toArray(new String[0]),
+            chunkTags.toArray(new String[0]));
     } else {
       return null;
     }
